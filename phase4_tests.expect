@@ -1,0 +1,14 @@
+Welcome to the metacircular evaluator!
+scm> 3
+scm> 5
+scm> 2
+3
+5
+scm> Error:
+scm> y
+scm> 8
+scm> foo
+scm> 8
+scm> -1
+scm> 
+Bye.

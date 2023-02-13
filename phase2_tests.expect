@@ -1,0 +1,21 @@
+Welcome to the metacircular evaluator!
+scm> 10
+scm> 486
+scm> 666
+scm> 495
+scm> 2
+scm> 2.1
+scm> 12.7
+scm> 19
+scm> 57
+scm> 57
+scm> #f
+scm> #t
+scm> #t
+scm> #f
+scm> #t
+scm> (3 . 4)
+scm> 4
+scm> 9
+scm> 
+Bye.

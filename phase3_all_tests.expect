@@ -1,0 +1,155 @@
+Welcome to the metacircular evaluator!
+scm> size
+scm> 2
+scm> 10
+scm> pi
+scm> radius
+scm> 314.159
+scm> circumference
+scm> 62.8318
+scm> nil
+scm> ()
+scm> square
+scm> 441
+scm> square
+scm> 441
+scm> 49
+scm> 81
+scm> sum-of-squares
+scm> 25
+scm> f
+scm> 136
+scm> abs
+scm> 3
+scm> 0
+scm> 3
+scm> a-plus-abs-b
+scm> 5
+scm> sqrt-iter
+scm> improve
+scm> average
+scm> good-enough?
+scm> sqrt
+scm> 3.00009155413138
+scm> 11.704699917758145
+scm> 1.7739279023207892
+scm> 1000.000369924366
+scm> sqrt
+scm> 3.00009155413138
+scm> 11.704699917758145
+scm> 1.7739279023207892
+scm> 1000.000369924366
+scm> cube
+scm> sum
+scm> inc
+scm> sum-cubes
+scm> 3025
+scm> identity
+scm> sum-integers
+scm> 55
+scm> 12
+scm> f
+scm> 456
+scm> x
+scm> 38
+scm> add-rat
+scm> sub-rat
+scm> mul-rat
+scm> div-rat
+scm> equal-rat?
+scm> x
+scm> 1
+scm> 2
+scm> x
+scm> y
+scm> z
+scm> 1
+scm> 3
+scm> ((1 . 2) 3 . 4)
+scm> make-rat
+scm> numer
+scm> denom
+scm> print-rat
+scm> one-half
+scm> 1/2
+scm> one-third
+scm> 5/6
+scm> 1/6
+scm> 6/9
+scm> gcd
+scm> make-rat
+scm> 2/3
+scm> one-through-four
+scm> (1 2 3 4)
+scm> 1
+scm> (2 3 4)
+scm> 2
+scm> (10 1 2 3 4)
+scm> (5 1 2 3 4)
+scm> map
+scm> (10 2.5 11.6 17)
+scm> (1 4 9 16)
+scm> scale-list
+scm> (10 20 30 40 50)
+scm> count-leaves
+scm> x
+scm> 4
+scm> 8
+scm> odd?
+scm> filter
+scm> (1 3 5)
+scm> accumulate
+scm> 15
+scm> 120
+scm> (1 2 3 4 5)
+scm> enumerate-interval
+scm> (2 3 4 5 6 7)
+scm> a
+scm> b
+scm> (1 2)
+scm> (a b)
+scm> (a 2)
+scm> a
+scm> (b c)
+scm> member
+scm> #f
+scm> (apple pear)
+scm> double
+scm> 10
+scm> make-list
+scm> compose
+scm> (10)
+scm> apply-twice
+scm> 20
+scm> 80
+scm> fact
+scm> 6
+scm> 3628800
+scm> combine
+scm> zip
+scm> ((1 5) (2 6) (3 7) (4 8))
+scm> 1
+scm> 1
+scm> 1
+scm> 1
+scm> loop
+scm> 12
+scm> 2
+2
+scm> print-and-square
+scm> 12
+144
+scm> Error:
+scm> hello
+4
+scm> foo
+scm> x
+scm> 3
+scm> define
+scm> 7
+scm> Error:
+scm> define
+scm> y
+scm> 4
+scm> 
+Bye.
