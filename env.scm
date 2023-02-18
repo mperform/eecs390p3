@@ -26,9 +26,19 @@
 ; may find the assoc procedure useful.
 (define (dictionary)
   (lambda (message . args)  ; replace with your solution
-    '()
+    (display message)
+    (display "\n")
+    (display args)
+    (display "\n")
+    
   )
+  ; get, contain, length, insert
+  ; a "chain" of pairs I assume? (key, value)
+  ; not sure how to hash the key to the value tho, or we iterate to find the value according to the key
+  ; insert: use cdr or car to recursively iterate, set to modify, etc
+  ; length: iterate thru to find the length
 )
+
 
 
 ; Returns an object that represents a frame in an environment, with
