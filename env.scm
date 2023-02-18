@@ -25,20 +25,72 @@
 ; You will need to use some subset of set!, set-car!, set-cdr!. You
 ; may find the assoc procedure useful.
 (define (dictionary)
-  (lambda (message . args)  ; replace with your solution
-    (display message)
-    (display "\n")
-    (display args)
-    (display "\n")
-    
+  (let ((dict '()))
+    (let ((len 0))
+      (lambda (message . args)  ; replace with your solution
+        (cond
+          ((eq? message 'contains)
+            (contains args dict)
+          )
+          ((eq? message 'insert)
+            (set dict (insert (car args) (cdr args) '() dict))
+          )
+          ((eq? message 'get)
+            (get args dict)
+          )
+          ((eq? message 'length)
+            len
+          )
+        )
+      )
+    ; get, contain, length, insert
+      ; a "chain" of pairs I assume? (key, value)
+      ; not sure how to hash the key to the value tho, or we iterate to find the value according to the key
+      ; insert: use cdr or car to recursively iterate, set to modify, etc
+      ; length: iterate thru to find the length
+    )
   )
-  ; get, contain, length, insert
-  ; a "chain" of pairs I assume? (key, value)
-  ; not sure how to hash the key to the value tho, or we iterate to find the value according to the key
-  ; insert: use cdr or car to recursively iterate, set to modify, etc
-  ; length: iterate thru to find the length
+)
+(define (contains key dict)
+  (cond
+    ((null? dict)
+      #f
+    )
+    ((eq? key (car (car dict)) ;;compare element to key of a key value pair in dict
+      #t
+    ))
+    (else
+      (contains key (cdr dict))
+    )
+  )
+)
+(define (insert key val read-so-far dict)
+  (cond 
+    ((null? dict)
+      (append read-so-far (cons key val))
+    ); dict is empty
+    ((eq? key (car (car dict))); key matches current key 
+      (append read-so-far (set-car! dict (cons key  val)))
+    )
+    (else ;recurse
+      (insert key val (append read-so-far (car dict)) (cdr dict))
+    )
+  )
 )
 
+(define (get key dict)
+  (cond
+    ((null? dict)
+      '()
+    )
+    ((eq? key (car (car dict)) ;;compare element to key of a key value pair in dict
+      (cons key (car(car dict)))
+    ))
+    (else
+      (contains key (cdr dict))
+    )
+  )
+)
 
 
 ; Returns an object that represents a frame in an environment, with
