@@ -26,20 +26,22 @@
 ; may find the assoc procedure useful.
 (define (dictionary)
   (let ((dict '()))
-    (let ((len 0))
+    ;(let ((len 0))
       (lambda (message . args)  ; replace with your solution
         (cond
           ((eq? message 'contains)
-            (contains args dict)
+            (contains (car args) dict)
           )
           ((eq? message 'insert)
-            (set dict (insert (car args) (cdr args) '() dict))
+            (set! dict (list (insert (car args) (cadr args) '() dict)))
+            (display dict)
+            (display \newline)
           )
           ((eq? message 'get)
-            (get args dict)
+            (get (car args) dict)
           )
           ((eq? message 'length)
-            len
+            (length dict)
           )
         )
       )
@@ -48,6 +50,20 @@
       ; not sure how to hash the key to the value tho, or we iterate to find the value according to the key
       ; insert: use cdr or car to recursively iterate, set to modify, etc
       ; length: iterate thru to find the length
+    ;) ;let parentheses
+  )
+)
+(define (len dict cnt)
+  (display dict)
+  (display "\n")
+  (cond
+    ((null? dict)
+      cnt
+    )
+    (else
+      (+ cnt 1)
+      (set! dict (cdr dict))
+      (len dict cnt)
     )
   )
 )
@@ -56,17 +72,22 @@
     ((null? dict)
       #f
     )
-    ((eq? key (car (car dict)) ;;compare element to key of a key value pair in dict
+    ((eq? key (car (car dict))) ;;compare element to key of a key value pair in dict
       #t
-    ))
+    )
     (else
       (contains key (cdr dict))
     )
   )
 )
+
 (define (insert key val read-so-far dict)
   (cond 
     ((null? dict)
+      (display (list read-so-far))
+      (display "\n")
+      (display (cons key val))
+      (display "\n")
       (append read-so-far (cons key val))
     ); dict is empty
     ((eq? key (car (car dict))); key matches current key 
@@ -79,17 +100,18 @@
 )
 
 (define (get key dict)
-  (cond
-    ((null? dict)
-      '()
-    )
-    ((eq? key (car (car dict)) ;;compare element to key of a key value pair in dict
-      (cons key (car(car dict)))
-    ))
-    (else
-      (contains key (cdr dict))
-    )
-  )
+  (cdr (assoc key dict))
+  ; (cond
+  ;   ((null? dict)
+  ;     '()
+  ;   )
+  ;   ((eq? key (car (car dict))) ;;compare element to key of a key value pair in dict
+  ;     (cdr (car dict))
+  ;   )
+  ;   (else
+  ;     (get key (cdr dict))
+  ;   )
+  ; )
 )
 
 
