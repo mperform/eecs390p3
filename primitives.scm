@@ -77,7 +77,23 @@
 ;   [primitive procedure <name>]
 ; where <name> is the name passed in to primitive-procedure.
 (define (primitive-procedure name arg-count native-impl)
-  '()  ; replace with your code
+  (lambda (message . args)  
+    (cond
+          ((eq? message 'call)
+            (cond
+              (
+                (eq? (length (cdr args)) arg-count)
+                (apply native-impl (map (lambda (x) (scheme-eval x (car args))) (cdr args)))
+
+              )
+              (else (arity-error name arg-count (length (cdr args))))
+            )  
+          )
+          ((eq? message 'to-string)
+            (string-append (string-append "[primitive procedure " (symbol->string name)) "]")
+          )
+        )
+  )
 )
 
 
