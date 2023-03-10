@@ -21,12 +21,18 @@
          datum
         )
         ((and (pair? datum) (list? datum))  ; combinations
-         ; The result of evaluating the first element must be a host
-         ; procedure, representing either a client procedure or
-         ; special form. Use procedure? to check this. Send the 'call
-         ; message to the host procedure, along with the necessary
-         ; arguments, to invoke it.
-         '()  ; replace with your solution
+        ; The result of evaluating the first element must be a host
+        ; procedure, representing either a client procedure or
+        ; special form. Use procedure? to check this. Send the 'call
+        ; message to the host procedure, along with the necessary
+        ; arguments, to invoke it.
+          (cond
+            (procedure? (car datum) ; checks if first element is callable
+              (let ((environment (add-primitives env)))
+                ((environment 'get (car datum)) 'call environment (cdr datum))
+              )
+            )
+          )
         )
         ((symbol? datum)
           (cond
