@@ -28,6 +28,14 @@
          ; arguments, to invoke it.
          '()  ; replace with your solution
         )
+        ((symbol? datum)
+          (cond
+            (((add-primitives env) 'contains datum)
+             ((env 'get datum) 'to-string)
+             )
+            (else (error "unknown identifier"))
+          )
+        )
         ; Add a case for symbols (identifiers) here.
         (else (error "cannot evaluate" datum))
   )
