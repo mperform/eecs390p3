@@ -26,22 +26,29 @@
 ; may find the assoc procedure useful.
 (define (dictionary)
   (let ((dict '()))
-    ;(let ((len 0))
       (lambda (message . args)  ; replace with your solution
         (cond
           ((eq? message 'contains)
             (contains (car args) dict)
           )
           ((eq? message 'insert)
-            (set! dict (list (insert (car args) (cadr args) '() dict)))
-            (display dict)
-            (display \newline)
+            ; (set! dict (insert (car args) (cadr args) dict))
+            (let ((entry (assoc (car args) dict)))
+              (cond 
+                ((not entry)
+                  (set! dict (append dict (list (cons (car args) (cadr args)))))
+                )
+                (else 
+                  (set-cdr! entry (cadr args))
+                )
+              )
+            )
           )
           ((eq? message 'get)
             (get (car args) dict)
           )
           ((eq? message 'length)
-            (length dict)
+            (len dict 0)
           )
         )
       )
@@ -50,20 +57,15 @@
       ; not sure how to hash the key to the value tho, or we iterate to find the value according to the key
       ; insert: use cdr or car to recursively iterate, set to modify, etc
       ; length: iterate thru to find the length
-    ;) ;let parentheses
   )
 )
 (define (len dict cnt)
-  (display dict)
-  (display "\n")
   (cond
     ((null? dict)
       cnt
     )
     (else
-      (+ cnt 1)
-      (set! dict (cdr dict))
-      (len dict cnt)
+      (len (cdr dict) (+ cnt 1))
     )
   )
 )
@@ -81,37 +83,52 @@
   )
 )
 
-(define (insert key val read-so-far dict)
-  (cond 
-    ((null? dict)
-      (display (list read-so-far))
-      (display "\n")
-      (display (cons key val))
-      (display "\n")
-      (append read-so-far (cons key val))
-    ); dict is empty
-    ((eq? key (car (car dict))); key matches current key 
-      (append read-so-far (set-car! dict (cons key  val)))
-    )
-    (else ;recurse
-      (insert key val (append read-so-far (car dict)) (cdr dict))
+(define (insert key val dict)
+  (let ((entry (assoc key dict)))
+    (display entry)
+       (display "\n")
+       (display dict)
+       (display "\n")
+    (cond 
+      ((not entry)
+       (display entry)
+       (display "\n")
+       (display dict)
+       (display "\n")
+        (append dict (list (cons key val)))
+      )
+      (
+        else ( ;I want to modify entry and then return modified dict
+          set-cdr! entry val
+          )
+      )
+
     )
   )
+  ; (cond 
+  ;   ((null? dict)
+  ;     (display "\n")
+  ;     (display "read-so-far: ")
+  ;     (display read-so-far)
+  ;     (display "\n")
+  ;     (append read-so-far (list (cons key val)))
+  ;   ); dict is empty
+  ;   ((eq? key (car (car dict))); key matches current key ;;THIS IS BROKEN
+  ;     (display read-so-far)
+  ;     (display "\n")
+  ;     (display dict)
+  ;     (display "\n")
+  ;     (append read-so-far (set-car! dict (cons key val)))
+  ;   )
+  ;   (else ;recurse
+  ;     ;(display (car (car dict)))
+  ;     (insert key val (append read-so-far (list (car dict))) (cdr dict))
+  ;   )
+  ; )
 )
 
 (define (get key dict)
   (cdr (assoc key dict))
-  ; (cond
-  ;   ((null? dict)
-  ;     '()
-  ;   )
-  ;   ((eq? key (car (car dict))) ;;compare element to key of a key value pair in dict
-  ;     (cdr (car dict))
-  ;   )
-  ;   (else
-  ;     (get key (cdr dict))
-  ;   )
-  ; )
 )
 
 
