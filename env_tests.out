@@ -15,26 +15,26 @@ pass
 pass
 pass
 Running frame tests...
-Error: () not false
 pass
-Error: () not equal? to 3
-Error: () not equal? to 3
-Error: () not equal? to (4)
-Error: () not false
 pass
-Error: () not false
-Error: () not equal? to 5
-Error: () not equal? to 6
-Error: () not equal? to 3
-Error: () not equal? to 6
-Error: () not false
-Error: () not false
-Error: () not false
 pass
-Error: () not equal? to 5
-Error: () not equal? to 6
-Error: () not equal? to 8
-Error: () not equal? to 5
-Error: () not equal? to 6
-Error: () not equal? to 9
+pass
+pass
+pass
+pass
+pass
+pass
+pass
+pass
+pass
+pass
+pass
+pass
+pass
+pass
+pass
+pass
+pass
+pass
+pass
 Done.

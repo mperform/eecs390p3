@@ -83,50 +83,6 @@
   )
 )
 
-(define (insert key val dict)
-  (let ((entry (assoc key dict)))
-    (display entry)
-       (display "\n")
-       (display dict)
-       (display "\n")
-    (cond 
-      ((not entry)
-       (display entry)
-       (display "\n")
-       (display dict)
-       (display "\n")
-        (append dict (list (cons key val)))
-      )
-      (
-        else ( ;I want to modify entry and then return modified dict
-          set-cdr! entry val
-          )
-      )
-
-    )
-  )
-  ; (cond 
-  ;   ((null? dict)
-  ;     (display "\n")
-  ;     (display "read-so-far: ")
-  ;     (display read-so-far)
-  ;     (display "\n")
-  ;     (append read-so-far (list (cons key val)))
-  ;   ); dict is empty
-  ;   ((eq? key (car (car dict))); key matches current key ;;THIS IS BROKEN
-  ;     (display read-so-far)
-  ;     (display "\n")
-  ;     (display dict)
-  ;     (display "\n")
-  ;     (append read-so-far (set-car! dict (cons key val)))
-  ;   )
-  ;   (else ;recurse
-  ;     ;(display (car (car dict)))
-  ;     (insert key val (append read-so-far (list (car dict))) (cdr dict))
-  ;   )
-  ; )
-)
-
 (define (get key dict)
   (cdr (assoc key dict))
 )
@@ -156,7 +112,34 @@
 ; > (f1 'contains 'y)
 ; #f
 (define (frame parent)
+  (let ((dict (dictionary)))
   (lambda (message . args)  ; replace with your solution
-    '()
-  )
+    (cond
+          ((eq? message 'insert)
+            (dict 'insert (car args) (cadr args))
+          )
+          ((eq? message 'contains)
+            (cond 
+              ((dict 'contains (car args))
+                #t
+              )
+              ((null? parent)
+                #f
+              )
+              (else (apply parent (cons message args)))
+            )
+          )
+          ((eq? message 'get)
+            (cond 
+              ((dict 'contains (car args))
+                (dict 'get (car args))
+              )
+              ; ((null? parent)
+              ;   #f
+              ; )
+              (else (apply parent (cons message args)))
+            )
+          )
+        )
+  ))
 )
