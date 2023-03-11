@@ -55,9 +55,7 @@
 ; Implements the begin form, which consists of a sequence of
 ; expressions.
 (define (scheme-begin env . args)
-  (begin 
-    (map (lambda (exp) (eval exp env)) args)
-  )
+  '()  ; replace with your solution
 )
 
 
@@ -67,21 +65,25 @@
   (cond 
     ((eq? (length args) 2) ;; 2 args provided --> no optional else expression
       (cond 
-        (((scheme-eval (car args) env)) ;test
-          (scheme-eval (cdr args) env);expression
+        ((scheme-eval (car args) env) ;test
+        
+          (scheme-eval (cadr args) env);expression
         )
       )
     )
     (
-      else ;; 3 args provided --> optional else expression
+      (eq? (length args) 3) ;; 3 args provided --> optional else expression
       (cond 
-        (((scheme-eval (car args) env)) ;test
+        ((scheme-eval (car args) env) ;test
           (scheme-eval (cadr args) env);expression
         )
         (else
           (scheme-eval (cadr (cdr args)) env) ;else
         )
       )
+    )
+    (
+      else (error "wrong number of args")
     )
   )
   
@@ -90,7 +92,16 @@
 
 ; Implements the quote form.
 (define (scheme-quote env . args)
-  '()  ; replace with your solution
+(cond
+  ((eq? (length args) 1)
+    (car args)
+  )
+  (
+    else (error "wrong number of args supplied - only accepts one arg")
+  )
+
+)
+  
 )
 
 
