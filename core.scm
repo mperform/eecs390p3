@@ -32,6 +32,9 @@
               ((procedure? first)
                 (apply first 'call env (cdr datum))
               )
+              (else 
+                (error "not a host procedure")
+              )
             )
           )
           ; (cond
