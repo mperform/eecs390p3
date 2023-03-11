@@ -37,13 +37,6 @@
               )
             )
           )
-          ; (cond
-          ;   ((procedure? (symbol->procedure (car datum))) ; checks if first element is callable
-          ;     (let ((proced (symbol->procedure (car datum))))
-          ;       ((primitive-procedure (car datum) 1 proced) 'call 'not #t)
-          ;     )
-          ;   )
-          ; )
         )
         ((symbol? datum)
           (cond
@@ -59,22 +52,39 @@
   )
 )
 
-(define (symbol->procedure sym)
-  (lambda (args)
-    (apply sym args)
-  )
-)
 ; Implements the begin form, which consists of a sequence of
 ; expressions.
 (define (scheme-begin env . args)
-  '()  ; replace with your solution
+  (begin 
+    (map (lambda (exp) (eval exp env)) args)
+  )
 )
 
 
 ; Implements a conditional, with a test, a then expression, and an
 ; optional else expression.
 (define (scheme-if env . args)
-  '()  ; replace with your solution
+  (cond 
+    ((eq? (length args) 2) ;; 2 args provided --> no optional else expression
+      (cond 
+        (((scheme-eval (car args) env)) ;test
+          (scheme-eval (cdr args) env);expression
+        )
+      )
+    )
+    (
+      else ;; 3 args provided --> optional else expression
+      (cond 
+        (((scheme-eval (car args) env)) ;test
+          (scheme-eval (cadr args) env);expression
+        )
+        (else
+          (scheme-eval (cadr (cdr args)) env) ;else
+        )
+      )
+    )
+  )
+  
 )
 
 
@@ -153,7 +163,16 @@
 ;   [syntax <name>]
 ; where <name> is the name passed in to primitive-procedure.
 (define (special-form name native-impl)
-  '()  ; replace with your solution
+  (lambda (message . args)  
+    (cond
+          ((eq? message 'call)
+            (apply native-impl args) 
+          )
+          ((eq? message 'to-string)
+            (string-append (string-append "[syntax " (symbol->string name)) "]")
+          )
+    )
+  )
 )
 
 
