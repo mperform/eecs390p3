@@ -55,7 +55,26 @@
 ; Implements the begin form, which consists of a sequence of
 ; expressions.
 (define (scheme-begin env . args)
-  '()  ; replace with your solution
+; (display "layer\n")
+; (display args)
+; (newline)
+; (display (cdr args))
+; (newline)
+  (cond
+    ((null? args)
+      '()
+    )
+    ((= (length args) 1)
+      ; (display "car: ")
+      ; (display (car args))
+      ; (newline)
+      (begin (scheme-eval (car args) env))
+    )
+    (else
+
+        (begin (scheme-begin env (cdr args)))
+    ) 
+  )
 )
 
 
@@ -139,7 +158,7 @@
 ; Use lambda-procedure to create the actual representation of the
 ; procedure.
 (define (scheme-lambda env . args)
-  '()  ; replace with your solution
+  '()
 )
 
 
