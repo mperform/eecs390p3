@@ -26,13 +26,23 @@
         ; special form. Use procedure? to check this. Send the 'call
         ; message to the host procedure, along with the necessary
         ; arguments, to invoke it.
-          (cond
-            (procedure? (car datum) ; checks if first element is callable
-              (let ((environment (add-primitives env)))
-                ((environment 'get (car datum)) 'call environment (cdr datum))
-              )
-            )
+        ; scheme-eval (first element)
+          (let* ((first (scheme-eval (car datum) env)))
+            (apply first 'call env (cdr datum))
+            ; (cond
+            ;   ((procedure? first)
+            ;     (display "here\n")
+            ;     (apply first 'call env (cdr datum))
+            ;   )
+            ; )
           )
+          ; (cond
+          ;   ((procedure? (symbol->procedure (car datum))) ; checks if first element is callable
+          ;     (let ((proced (symbol->procedure (car datum))))
+          ;       ((primitive-procedure (car datum) 1 proced) 'call 'not #t)
+          ;     )
+          ;   )
+          ; )
         )
         ((symbol? datum)
           (cond
@@ -47,7 +57,11 @@
   )
 )
 
-
+(define (symbol->procedure sym)
+  (lambda (args)
+    (apply sym args)
+  )
+)
 ; Implements the begin form, which consists of a sequence of
 ; expressions.
 (define (scheme-begin env . args)
