@@ -28,13 +28,11 @@
         ; arguments, to invoke it.
         ; scheme-eval (first element)
           (let* ((first (scheme-eval (car datum) env)))
-            (apply first 'call env (cdr datum))
-            ; (cond
-            ;   ((procedure? first)
-            ;     (display "here\n")
-            ;     (apply first 'call env (cdr datum))
-            ;   )
-            ; )
+            (cond
+              ((procedure? first)
+                (apply first 'call env (cdr datum))
+              )
+            )
           )
           ; (cond
           ;   ((procedure? (symbol->procedure (car datum))) ; checks if first element is callable
@@ -47,7 +45,8 @@
         ((symbol? datum)
           (cond
             (((add-primitives env) 'contains datum)
-             ((env 'get datum) 'to-string)
+              ; ((env 'get datum) 'to-string)
+              (env 'get datum)
              )
             (else (error "unknown identifier"))
           )
