@@ -117,7 +117,12 @@
 ; type. The returned procedure also checks that the arguments have
 ; valid values for a division-like operation.
 (define (divide-checked name arg-count test typename impl)
-  '()  ; replace with your code
+   (primitive-procedure name arg-count
+                       (lambda args
+                         (check-arg-types name test typename args 1)
+                         (check-arg-types name (lambda (x) (not (eq? x 0))) typename args 2)
+                         (apply impl args)
+                       ))
 )
 
 
