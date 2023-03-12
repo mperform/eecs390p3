@@ -33,6 +33,9 @@
                 (apply first 'call env (cdr datum))
               )
               (else 
+                (display "first: ")
+                (display first)
+                (newline)
                 (error "not a host procedure")
               )
             )
@@ -55,24 +58,23 @@
 ; Implements the begin form, which consists of a sequence of
 ; expressions.
 (define (scheme-begin env . args)
-; (display "layer\n")
-; (display args)
-; (newline)
-; (display (cdr args))
-; (newline)
+  (display args)
+  (newline)
   (cond
     ((null? args)
-      '()
+      (error "zero args passed")
     )
     ((= (length args) 1)
-      ; (display "car: ")
-      ; (display (car args))
-      ; (newline)
-      (begin (scheme-eval (car args) env))
+      (display "1")
+      (scheme-eval (car args) env)
     )
     (else
-
-        (begin (scheme-begin env (cdr args)))
+        (begin 
+          (display "begin\n")
+          (scheme-eval (car args) env)
+          ; (1 2 3 4 5) scheme eval 5 
+          (apply scheme-begin (append (list env) (cdr args)))
+        )
     ) 
   )
 )
@@ -146,7 +148,36 @@
 ;   [lambda procedure <name>]
 ; where <name> is the name passed in to primitive-procedure.
 (define (lambda-procedure name formals body parent-env)
-  '()  ; replace with your solution
+; Example usage -->
+;(define proc1 (lambda-procedure 'foo '(x) '((+ x 1)) global-env))
+;(proc1 'call global-env -3)
+  (lambda (message . args)  
+    (cond
+          ((eq? message 'call)
+            (cond
+              ((= (length (cdr args)) (length formals)) ;Check whether the given number of arguments matches the expected number
+                (let 
+                  ((env (frame parent-env))) ;1. Extend the definition environment with a new frame.
+
+                  ;(display (map (lambda (z) (scheme-eval z (car args))) (cdr args))); 2) Evaluate the arguments in the given (dynamic) environment.
+                  ;(map (lambda (x y) (env 'insert x y)) formals args) ;3. Bind the formal parameters to the argument values in the new frame.
+                  ;(map (lambda (x y) (env 'insert x y)) formals (map (lambda (z) (scheme-eval z (car args))) (cdr args))) ; steps 2 & 3 combined
+                  ;(display (scheme-eval 'x env))
+                  (map (lambda (x y) (env 'insert x y)) formals (map (lambda (z) (scheme-eval z (car args))) (cdr args))) ; steps 2 & 3 combined
+                  (scheme-begin env body) ; Evaluate the body expressions in the new environment.
+                )
+              )
+            ; > (define f1 (frame '()))
+            ; > (define f2 (frame f1))
+            ; > (f1 'insert 'x 3)
+              (else (arity-error name (length args) (length (cdr args))))
+            )  
+          )
+          ((eq? message 'to-string)
+            (string-append (string-append "[lambda procedure " (symbol->string name)) "]")
+          )
+        )
+  )
 )
 
 
