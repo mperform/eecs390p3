@@ -242,6 +242,7 @@
             ((all-symbols? (car args)) ;; checks to make sure formals and name are all symbols
               ; (env 'insert name (scheme-lambda formals body))
               (env 'insert (car (car args)) (scheme-lambda env (cdr (car args)) (car (cdr args))))
+              (car (car args))
             )
             (else (error "invalid"))
           )
@@ -250,6 +251,7 @@
           (cond
             ((symbol? (car args))
               (env 'insert (car args) (scheme-eval (cadr args) env))
+              (car args)
             )
             (else
               (error "<variable> is not a symbol")
