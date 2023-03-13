@@ -239,7 +239,7 @@
         ; (scheme-define global-env '(func x z) '(+ x (- y z)))
         ((list? (car args)) ; case 2: (define (<variable> <formals>) <body>)
           (cond 
-            ((all-symbols? (car args))) ;; checks to make sure formals are all symbols
+            ((all-symbols? (car args)) ;; checks to make sure formals and name are all symbols
               ; (env 'insert name (scheme-lambda formals body))
               (env 'insert (car (car args)) (scheme-lambda env (cdr (car args)) (car (cdr args))))
             )
@@ -279,7 +279,6 @@
     )
   )
 )
-
 
 ; Implement the mu form here.
 
