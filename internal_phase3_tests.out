@@ -1,0 +1,38 @@
+Running special-form tests...
+pass
+pass
+pass
+Running scheme-begin tests...
+pass
+pass
+Running scheme-if tests...
+pass
+pass
+pass
+Running scheme-quote tests...
+pass
+pass
+Running lambda-procedure tests...
+pass
+pass
+pass
+pass
+pass
+pass
+pass
+pass
+Running scheme-lambda tests...
+pass
+pass
+pass
+pass
+pass
+Running scheme-define tests...
+pass
+pass
+Running error tests...
+pass
+pass
+pass
+pass
+Done.

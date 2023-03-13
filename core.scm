@@ -146,11 +146,7 @@
 ; Example usage -->
 ;(define proc1 (lambda-procedure 'foo '(x) '((+ x 1)) global-env))
 ;(proc1 'call global-env -3)
-  ;(display formals)
-  ;(newline)
   (lambda (message . args)  
-    ;(display args)
-    ;(newline)
     (cond
           ((eq? message 'call)
             (cond
@@ -165,7 +161,6 @@
                 )
               )
               (else 
-                
                 (arity-error name (length args) (length (cdr args)))
               )
             )  
@@ -190,16 +185,15 @@
   ; (define proc4 (scheme-lambda global-env '(x) '(+ x 1)))
   ; (assert-equal (proc4 'call global-env -3) -2)
   ; (assert-equal (proc4 'call global-env 'x) 4)
+
   (cond 
     ((has-dup (car args))
-      (error "has duplicates in args\n")
+      (error "has duplicates in args")
     )
     (
       else (lambda-procedure '<lambda> (car args) (cdr args) env)
     )
   )
-  
-
 )
 
 ;; Checks for duplicates
@@ -232,8 +226,8 @@
 ; For procedure definitions, use lambda-procedure to create the actual
 ; representation of the procedure.
 (define (scheme-define env . args)
-  (cond 
-    ((= (length args) 2)
+  ;(cond 
+    ;((= (length args) 2)
       (cond
         ; (define proc4 (scheme-lambda global-env '(x) '(+ x 1)))
         ; (scheme-define global-env '(func x z) '(+ x (- y z)))
@@ -241,7 +235,9 @@
           (cond 
             ((all-symbols? (car args)) ;; checks to make sure formals and name are all symbols
               ; (env 'insert name (scheme-lambda formals body))
-              (env 'insert (car (car args)) (scheme-lambda env (cdr (car args)) (car (cdr args))))
+              ;(display (cdr args))
+              ;(apply first 'call env (cdr datum))
+              (env 'insert (car (car args)) (apply scheme-lambda env (cdr (car args)) (cdr args))) ;; ISSUE
               (car (car args))
             )
             (else (error "invalid"))
@@ -249,7 +245,7 @@
         )
         (else ; case 1: (define <variable> <expresson>)
           (cond
-            ((symbol? (car args))
+            ((and (symbol? (car args)) (= (length args) 2))
               (env 'insert (car args) (scheme-eval (cadr args) env))
               (car args)
             )
@@ -259,10 +255,9 @@
           )
         )
       )
-    )
-
-    (else (error "too many args provided"))
-  )
+    ;)
+  ;  (else (error "too many args provided"))
+  ;)
 )
 
 ;; Checks to make sure list contains all symbols

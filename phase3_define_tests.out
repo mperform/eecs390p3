@@ -1,0 +1,19 @@
+Welcome to the metacircular evaluator!
+scm> size
+scm> 2
+scm> 10
+scm> pi
+scm> radius
+scm> 314.159
+scm> circumference
+scm> 62.8318
+scm> square
+scm> 441
+scm> 49
+scm> 81
+scm> sum-of-squares
+scm> 25
+scm> f
+scm> 136
+scm> 
+Bye.

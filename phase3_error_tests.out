@@ -1,0 +1,11 @@
+Welcome to the metacircular evaluator!
+scm> x
+scm> 3
+scm> 3
+scm> 3
+scm> Error:
+scm> Error:
+scm> Error:
+scm> Error:
+scm> 
+Bye.

@@ -1,0 +1,8 @@
+Welcome to the metacircular evaluator!
+scm> x
+scm> ()
+scm> (quote x)
+scm> (+ 1 3)
+scm> (quote x)
+scm> 
+Bye.
