@@ -33,9 +33,7 @@
                 (apply first 'call env (cdr datum))
               )
               (else 
-                (display "first: ")
-                (display first)
-                (newline)
+
                 (error "not a host procedure")
               )
             )
@@ -58,19 +56,16 @@
 ; Implements the begin form, which consists of a sequence of
 ; expressions.
 (define (scheme-begin env . args)
-  (display args)
-  (newline)
+
   (cond
     ((null? args)
       (error "zero args passed")
     )
     ((= (length args) 1)
-      (display "1")
       (scheme-eval (car args) env)
     )
     (else
         (begin 
-          (display "begin\n")
           (scheme-eval (car args) env)
           ; (1 2 3 4 5) scheme eval 5 
           (apply scheme-begin (append (list env) (cdr args)))
@@ -151,7 +146,11 @@
 ; Example usage -->
 ;(define proc1 (lambda-procedure 'foo '(x) '((+ x 1)) global-env))
 ;(proc1 'call global-env -3)
+  ;(display formals)
+  ;(newline)
   (lambda (message . args)  
+    ;(display args)
+    ;(newline)
     (cond
           ((eq? message 'call)
             (cond
@@ -159,18 +158,16 @@
                 (let 
                   ((env (frame parent-env))) ;1. Extend the definition environment with a new frame.
 
-                  ;(display (map (lambda (z) (scheme-eval z (car args))) (cdr args))); 2) Evaluate the arguments in the given (dynamic) environment.
+                  ;(map (lambda (z) (scheme-eval z (car args))) (cdr args)); 2) Evaluate the arguments in the given (dynamic) environment.
                   ;(map (lambda (x y) (env 'insert x y)) formals args) ;3. Bind the formal parameters to the argument values in the new frame.
-                  ;(map (lambda (x y) (env 'insert x y)) formals (map (lambda (z) (scheme-eval z (car args))) (cdr args))) ; steps 2 & 3 combined
-                  ;(display (scheme-eval 'x env))
                   (map (lambda (x y) (env 'insert x y)) formals (map (lambda (z) (scheme-eval z (car args))) (cdr args))) ; steps 2 & 3 combined
-                  (scheme-begin env body) ; Evaluate the body expressions in the new environment.
+                  (apply scheme-begin (append (list env) body)) ; Evaluate the body expressions in the new environment. 
                 )
               )
-            ; > (define f1 (frame '()))
-            ; > (define f2 (frame f1))
-            ; > (f1 'insert 'x 3)
-              (else (arity-error name (length args) (length (cdr args))))
+              (else 
+                
+                (arity-error name (length args) (length (cdr args)))
+              )
             )  
           )
           ((eq? message 'to-string)
@@ -189,9 +186,41 @@
 ; Use lambda-procedure to create the actual representation of the
 ; procedure.
 (define (scheme-lambda env . args)
-  '()
+  ; Example Usage -->
+  ; (define proc4 (scheme-lambda global-env '(x) '(+ x 1)))
+  ; (assert-equal (proc4 'call global-env -3) -2)
+  ; (assert-equal (proc4 'call global-env 'x) 4)
+  (cond 
+    ((has-dup (car args))
+      (error "has duplicates in args\n")
+    )
+    (
+      else (lambda-procedure '<lambda> (car args) (cdr args) env)
+    )
+  )
+  
+
 )
 
+;; Checks for duplicates
+;; returns #t if list contains duplicates
+;; returns #f if list doesn't contain duplicates
+;; example usage:
+;; (has-dup '(1 2 3)) --> #f
+;; (has-dup '(1 2 3 3)) --> #t
+(define (has-dup lst)
+  (cond 
+    ((null? lst)
+      #f
+    )
+    ((eq? (member (car lst) (cdr lst)) #f)
+      (has-dup (cdr lst))
+    )
+    (else
+      #t
+    )
+  )
+)
 
 ; Implements the define form. Returns the symbol being defined.
 ;
@@ -203,7 +232,52 @@
 ; For procedure definitions, use lambda-procedure to create the actual
 ; representation of the procedure.
 (define (scheme-define env . args)
-  '()  ; replace with your solution
+  (cond 
+    ((= (length args) 2)
+      (cond
+        ; (define proc4 (scheme-lambda global-env '(x) '(+ x 1)))
+        ; (scheme-define global-env '(func x z) '(+ x (- y z)))
+        ((list? (car args)) ; case 2: (define (<variable> <formals>) <body>)
+          (cond 
+            ((all-symbols? (cdr (car args))) ;; checks to make sure formals are all symbols
+              ; (env 'insert name (scheme-lambda formals body))
+              (env 'insert (car (car args)) (scheme-lambda env (cdr (car args)) (car (cdr args))))
+            )
+            (else (error "invalid"))
+          )
+        )
+        (else ; case 1: (define <variable> <expresson>)
+          (cond
+            ((symbol? (car args))
+              (env 'insert (car args) (scheme-eval (cadr args) env))
+            )
+            (else
+              (error "<variable> is not a symbol")
+            )
+          )
+        )
+      )
+    )
+
+    (else (error "too many args provided"))
+  )
+)
+
+;; Checks to make sure list contains all symbols
+;; List contains non symbol --> return false
+;; List only contains symbols --> return true
+(define (all-symbols? lst)
+  (cond
+    ((null? lst)
+      #t
+    )
+    ((symbol? (car lst))
+      (all-symbols? (cdr lst))
+    )
+    (else 
+      #f
+    )
+  )
 )
 
 
