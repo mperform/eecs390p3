@@ -1,0 +1,12 @@
+Welcome to the metacircular evaluator!
+scm> y
+scm> a
+scm> 8
+scm> foo
+scm> Error: incorrect number of arguments to <mu>: expected 1, got 2
+scm> bar
+scm> 1005
+scm> foobar
+scm> -96
+scm> 
+Bye.

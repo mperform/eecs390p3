@@ -26,19 +26,18 @@
 ; may find the assoc procedure useful.
 (define (dictionary)
   (let ((dict '()))
-      (lambda (message . args)  ; replace with your solution
+      (lambda (message . args)
         (cond
           ((eq? message 'contains)
             (contains (car args) dict)
           )
           ((eq? message 'insert)
-            ; (set! dict (insert (car args) (cadr args) dict))
             (let ((entry (assoc (car args) dict)))
               (cond 
-                ((not entry)
+                ((not entry) ;; Not found --> means you insert
                   (set! dict (append dict (list (cons (car args) (cadr args)))))
                 )
-                (else 
+                (else ;; Found --> modify
                   (set-cdr! entry (cadr args))
                 )
               )
@@ -52,11 +51,6 @@
           )
         )
       )
-    ; get, contain, length, insert
-      ; a "chain" of pairs I assume? (key, value)
-      ; not sure how to hash the key to the value tho, or we iterate to find the value according to the key
-      ; insert: use cdr or car to recursively iterate, set to modify, etc
-      ; length: iterate thru to find the length
   )
 )
 (define (len dict cnt)
@@ -134,9 +128,6 @@
               ((dict 'contains (car args))
                 (dict 'get (car args))
               )
-              ; ((null? parent)
-              ;   #f
-              ; )
               (else (apply parent (cons message args)))
             )
           )
