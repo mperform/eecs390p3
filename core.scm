@@ -142,26 +142,29 @@
 ; following format:
 ;   [lambda procedure <name>]
 ; where <name> is the name passed in to primitive-procedure.
-(define (lambda-procedure name formals body parent-env)
 ; Example usage -->
 ;(define proc1 (lambda-procedure 'foo '(x) '((+ x 1)) global-env))
 ;(proc1 'call global-env -3)
+(define (lambda-procedure name formals body parent-env)
   (lambda (message . args)  
     (cond
           ((eq? message 'call)
             (cond
               ((= (length (cdr args)) (length formals)) ;Check whether the given number of arguments matches the expected number
                 (let 
-                  ((env (frame parent-env))) ;1. Extend the definition environment with a new frame.
+                  ((env (frame parent-env)) ;1. Extend the definition environment with a new frame.
+                  (given-env (car args))
+                  (unevaluated-args (cdr args))             
+                  ) 
 
                   ;(map (lambda (z) (scheme-eval z (car args))) (cdr args)); 2) Evaluate the arguments in the given (dynamic) environment.
                   ;(map (lambda (x y) (env 'insert x y)) formals args) ;3. Bind the formal parameters to the argument values in the new frame.
-                  (map (lambda (x y) (env 'insert x y)) formals (map (lambda (z) (scheme-eval z (car args))) (cdr args))) ; steps 2 & 3 combined
+                  (map (lambda (formal-params arg-vals) (env 'insert formal-params arg-vals)) formals (map (lambda (x) (scheme-eval x given-env)) unevaluated-args)) ; steps 2 & 3 combined
                   (apply scheme-begin (append (list env) body)) ; Evaluate the body expressions in the new environment. 
                 )
               )
               (else 
-                (arity-error name (length args) (length (cdr args)))
+                (arity-error name (length formals) (length (cdr args))) ; wait why is it cdr args? because we just want the arg-values, args includes also the env
               )
             )  
           )
@@ -180,12 +183,11 @@
 ;
 ; Use lambda-procedure to create the actual representation of the
 ; procedure.
+; Example Usage -->
+; (define proc4 (scheme-lambda global-env '(x) '(+ x 1)))
+; (assert-equal (proc4 'call global-env -3) -2)
+; (assert-equal (proc4 'call global-env 'x) 4)
 (define (scheme-lambda env . args)
-  ; Example Usage -->
-  ; (define proc4 (scheme-lambda global-env '(x) '(+ x 1)))
-  ; (assert-equal (proc4 'call global-env -3) -2)
-  ; (assert-equal (proc4 'call global-env 'x) 4)
-
   (cond 
     ((has-dup (car args))
       (error "has duplicates in args")
@@ -225,19 +227,17 @@
 ;
 ; For procedure definitions, use lambda-procedure to create the actual
 ; representation of the procedure.
+; Example usage -->
+; (define proc4 (scheme-lambda global-env '(x) '(+ x 1)))
+; (scheme-define global-env '(func x z) '(+ x (- y z)))
 (define (scheme-define env . args)
-  ;(cond 
-    ;((= (length args) 2)
       (cond
-        ; (define proc4 (scheme-lambda global-env '(x) '(+ x 1)))
-        ; (scheme-define global-env '(func x z) '(+ x (- y z)))
         ((list? (car args)) ; case 2: (define (<variable> <formals>) <body>)
           (cond 
             ((all-symbols? (car args)) ;; checks to make sure formals and name are all symbols
               ; (env 'insert name (scheme-lambda formals body))
-              ;(display (cdr args))
               ;(apply first 'call env (cdr datum))
-              (env 'insert (car (car args)) (apply scheme-lambda env (cdr (car args)) (cdr args))) ;; ISSUE
+              (env 'insert (car (car args)) (apply scheme-lambda env (cdr (car args)) (cdr args)))
               (car (car args))
             )
             (else (error "invalid"))
@@ -255,9 +255,6 @@
           )
         )
       )
-    ;)
-  ;  (else (error "too many args provided"))
-  ;)
 )
 
 ;; Checks to make sure list contains all symbols
@@ -277,8 +274,92 @@
   )
 )
 
-; Implement the mu form here.
+;; Helper function to hold shared functionality between mu-procedure and lambda-procedure
+; (define (procedure-helper given-env extended-env formals unevaluated-args)
+;   (cond
+;     ((= (length (cdr args)) (length formals)) ;Check whether the given number of arguments matches the expected number
+;       (let 
+;         ((env (frame (car args))) ;1. Extend the given environment with a new frame.
+;         (given-env (car args))
+;         (unevaluated-args (cdr args))             
+;         ) 
 
+;         ;(map (lambda (z) (scheme-eval z (car args))) (cdr args)); 2) Evaluate the arguments in the given (dynamic) environment.
+;         ;(map (lambda (x y) (env 'insert x y)) formals args) ;3. Bind the formal parameters to the argument values in the new frame.
+;         (map (lambda (formal-params arg-vals) (extended-env 'insert formal-params arg-vals)) formals (map (lambda (x) (scheme-eval x given-env)) unevaluated-args)) ; steps 2 & 3 combined
+;         (apply scheme-begin (append (list env) body)) ; Evaluate the body expressions in the new environment. 
+;       )
+;     )
+;     (else 
+;       (arity-error name (length formals) (length (cdr args))) ; wait why is it cdr args? because we just want the arg-values, args includes also the env
+;     )
+;   )
+; )
+
+
+
+
+
+
+
+; Implement the mu form here.
+; Start by implementing an analogue of lambda-procedure for procedures with dynamic scope. As always, avoid repeating code, refactoring if necessary.
+(define (mu-procedure name formals body parent-env)
+ (lambda (message . args)  
+    (cond
+          ((eq? message 'call)
+            (cond
+              ((= (length (cdr args)) (length formals)) ;Check whether the given number of arguments matches the expected number
+                (let 
+                  ((env (frame (car args))) ;1. Extend the given environment with a new frame.
+                  (given-env (car args))
+                  (unevaluated-args (cdr args))             
+                  ) 
+
+                  ;(map (lambda (z) (scheme-eval z (car args))) (cdr args)); 2) Evaluate the arguments in the given (dynamic) environment.
+                  ;(map (lambda (x y) (env 'insert x y)) formals args) ;3. Bind the formal parameters to the argument values in the new frame.
+                  (map (lambda (formal-params arg-vals) (env 'insert formal-params arg-vals)) formals (map (lambda (x) (scheme-eval x given-env)) unevaluated-args)) ; steps 2 & 3 combined
+                  (apply scheme-begin (append (list env) body)) ; Evaluate the body expressions in the new environment. 
+                )
+              )
+              (else 
+                (arity-error name (length formals) (length (cdr args))) ; wait why is it cdr args? because we just want the arg-values, args includes also the env
+              )
+            )  
+          )
+          ((eq? message 'to-string)
+            (string-append (string-append "[mu procedure " (symbol->string name)) "]")
+          )
+        )
+  )
+)
+
+; Second, implement a scheme-mu procedure that handles evaluation of a mu expression, resulting in a newly created procedure object.
+; Example usage
+; scm> (define y 5)
+; y
+; scm> (define foo (mu (x)
+;                    (+ x y)
+;                  ))
+; foo
+; scm> (foo 3)
+; 8
+; scm> ((mu (y)
+;         (foo -3)
+;       )
+;       2
+;      )
+; -1
+(define (scheme-mu env . args)
+  (cond 
+    ((has-dup (car args))
+      (error "has duplicates in args")
+    )
+    (
+      else (mu-procedure '<mu> (car args) (cdr args) env)
+    )
+  )
+)
 
 ; Returns an object respresenting the given library implementation for
 ; a special form.
@@ -315,6 +396,7 @@
   (env 'insert 'quote (special-form 'quote scheme-quote))
   (env 'insert 'lambda (special-form 'lambda scheme-lambda))
   (env 'insert 'define (special-form 'define scheme-define))
+  (env 'insert 'mu (special-form 'mu scheme-mu))
   ; Insert the mu form here.
   env
 )
