@@ -2,19 +2,17 @@
 
 item
 
-(= #f item)
+(define constnum 9.8)
 
-(define constant 9.8)
-
-constant
+constnum
 
 (define mass 10)
 
 mass
 
-(define force (* mass constant))
+(define force-var (* mass constnum))
 
-force
+force-var
 
 (define lst (list))
 
