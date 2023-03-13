@@ -53,6 +53,12 @@
   )
 )
 
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; vvvv Begin, IF, Quote Functions vvvv ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; Implements the begin form, which consists of a sequence of
 ; expressions.
 (define (scheme-begin env . args)
@@ -73,7 +79,6 @@
     ) 
   )
 )
-
 
 ; Implements a conditional, with a test, a then expression, and an
 ; optional else expression.
@@ -102,23 +107,26 @@
       else (error "wrong number of args")
     )
   )
-  
 )
-
 
 ; Implements the quote form.
 (define (scheme-quote env . args)
-(cond
-  ((eq? (length args) 1)
-    (car args)
+  (cond
+    ((eq? (length args) 1)
+      (car args)
+    )
+    (
+      else (error "wrong number of args supplied - only accepts one arg")
+    )
   )
-  (
-    else (error "wrong number of args supplied - only accepts one arg")
-  )
+)
 
-)
-  
-)
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; vvvv Lambda and Define functions vvvv ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 ; Returns an object representing a user-defined lambda procedure with
@@ -182,26 +190,6 @@
   )
 )
 
-;; Checks for duplicates
-;; returns #t if list contains duplicates
-;; returns #f if list doesn't contain duplicates
-;; example usage:
-;; (has-dup '(1 2 3)) --> #f
-;; (has-dup '(1 2 3 3)) --> #t
-(define (has-dup lst)
-  (cond 
-    ((null? lst)
-      #f
-    )
-    ((eq? (member (car lst) (cdr lst)) #f)
-      (has-dup (cdr lst))
-    )
-    (else
-      #t
-    )
-  )
-)
-
 ; Implements the define form. Returns the symbol being defined.
 ;
 ; You must support both variable and procedure definitions.
@@ -219,10 +207,13 @@
         ((list? (car args)) ; case 2: (define (<variable> <formals>) <body>)
           (cond 
             ((all-symbols? (car args)) ;; checks to make sure formals and name are all symbols
-              ; (env 'insert name (scheme-lambda formals body))
-              ;(apply first 'call env (cdr datum))
-              (env 'insert (car (car args)) (apply scheme-lambda env (cdr (car args)) (cdr args)))
-              (car (car args))
+              (let ((name (car (car args)))
+                    (body (cdr args))
+                    (formals (cdr (car args))))
+                
+                (env 'insert name (apply scheme-lambda env formals body))
+                name
+              )
             )
             (else (error "invalid"))
           )
@@ -241,6 +232,12 @@
       )
 )
 
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; vvvv Helper functions vvvv ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;; Checks to make sure list contains all symbols
 ;; List contains non symbol --> return false
 ;; List only contains symbols --> return true
@@ -254,6 +251,26 @@
     )
     (else 
       #f
+    )
+  )
+)
+
+;; Checks for duplicates
+;; returns #t if list contains duplicates
+;; returns #f if list doesn't contain duplicates
+;; example usage:
+;; (has-dup '(1 2 3)) --> #f
+;; (has-dup '(1 2 3 3)) --> #t
+(define (has-dup lst)
+  (cond 
+    ((null? lst)
+      #f
+    )
+    ((eq? (member (car lst) (cdr lst)) #f)
+      (has-dup (cdr lst))
+    )
+    (else
+      #t
     )
   )
 )
@@ -275,6 +292,10 @@
   )
 )
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; vvvv MU implementation vvvv ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; Implement the mu form here.
 ; Start by implementing an analogue of lambda-procedure for procedures with dynamic scope. As always, avoid repeating code, refactoring if necessary.
@@ -318,6 +339,11 @@
     )
   )
 )
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; vvvv Special Form functions vvvv ;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; Returns an object respresenting the given library implementation for
 ; a special form.
